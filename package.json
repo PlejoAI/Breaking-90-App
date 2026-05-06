@@ -10,15 +10,22 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@expo/metro-runtime": "latest",
-    "expo": "latest",
-    "expo-av": "latest",
-    "expo-image-picker": "latest",
-    "expo-iap": "latest",
-    "expo-speech": "latest",
-    "react": "latest",
-    "react-native": "latest",
-    "react-native-web": "latest"
+    "@expo/metro-runtime": "55.0.11",
+    "expo": "55.0.23",
+    "expo-iap": "4.2.4",
+    "expo-image-picker": "55.0.20",
+    "expo-speech": "55.0.13",
+    "expo-video": "~55.0.16",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-native": "0.83.6",
+    "react-native-web": "0.21.2"
   },
-  "devDependencies": {}
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": []
+      }
+    }
+  }
 }
