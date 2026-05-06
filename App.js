@@ -121,11 +121,11 @@ const BallFlightVisualizer = ({ plane = 'Outside-In', face = 'Open' }) => {
 
         <View style={{ position: 'absolute', top: 15, left: 15 }}>
             <Text style={{ color: '#666', fontSize: 9, fontWeight: 'bold', letterSpacing: 1 }}>FACE TO PATH</Text>
-            <Text style={{ color: '#00FF66', fontSize: 14, fontWeight: '700' }}>{faceToPath > 0 ? '+' : ''}{(faceToPath / 3).toFixed(1)}°</Text>
+            <Text style={{ color: '#00FF66', fontSize: 14, fontWeight: '700' }}>{faceToPath > 0 ? '+' : ''}{(faceToPath / 3).toFixed(1)}Â°</Text>
         </View>
         <View style={{ position: 'absolute', top: 15, right: 15, alignItems: 'flex-end' }}>
             <Text style={{ color: '#666', fontSize: 9, fontWeight: 'bold', letterSpacing: 1 }}>CLUB PATH</Text>
-            <Text style={{ color: '#00D1FF', fontSize: 14, fontWeight: '700' }}>{pathAngle > 0 ? '+' : ''}{(pathAngle / 4).toFixed(1)}°</Text>
+            <Text style={{ color: '#00D1FF', fontSize: 14, fontWeight: '700' }}>{pathAngle > 0 ? '+' : ''}{(pathAngle / 4).toFixed(1)}Â°</Text>
         </View>
 
         {trail.map((pos, i) => (
@@ -511,7 +511,7 @@ export default function App() {
             <View style={{ flexDirection: 'row', gap: 15 }}>
               <View style={styles.featureCard}>
                 <Text style={styles.bioHighlight}>WHY "BREAKING 90"?</Text>
-                <Text style={styles.bioText}>Empowering golfers to break 90 and have a blast doing it—our app delivers expert swing analysis, practical improvement tools, and a healthy dose of good-natured roasting. We believe the path to better scores is paved with honest feedback and a sense of humor. #RoastAndRoarUnder90</Text>
+                <Text style={styles.bioText}>Empowering golfers to break 90 and have a blast doing itâ€”our app delivers expert swing analysis, practical improvement tools, and a healthy dose of good-natured roasting. We believe the path to better scores is paved with honest feedback and a sense of humor. #RoastAndRoarUnder90</Text>
               </View>
               <View style={styles.featureCard}>
                 <Text style={styles.bioHighlight}>TRACK YOUR SCORES</Text>
@@ -530,10 +530,10 @@ export default function App() {
           <View style={styles.pricingBox}>
             <Text style={styles.pricingHeadline}>Unlock Elite Analysis</Text>
             <View style={styles.pricingList}>
-              <Text style={styles.pricingItem}>✓ Swing Critiques (Roasts) to better your all around game</Text>
-              <Text style={styles.pricingItem}>✓ Frame-by-Frame Biomechanics</Text>
-              <Text style={styles.pricingItem}>✓ Custom Youtube Drill Library</Text>
-              <Text style={styles.pricingItem}>✓ Performance & Score Tracking</Text>
+              <Text style={styles.pricingItem}>âœ“ Swing Critiques (Roasts) to better your all around game</Text>
+              <Text style={styles.pricingItem}>âœ“ Frame-by-Frame Biomechanics</Text>
+              <Text style={styles.pricingItem}>âœ“ Custom Youtube Drill Library</Text>
+              <Text style={styles.pricingItem}>âœ“ Performance & Score Tracking</Text>
             </View>
             <View style={styles.trialHighlight}><Text style={styles.trialHighlightText}>3 DAYS FREE</Text></View>
             <Text style={styles.pricingTerms}>Then {membershipPrice}. Cancel anytime through Apple.</Text>
@@ -596,10 +596,10 @@ export default function App() {
                         <Text style={styles.uploadBoxSub}>Select a video or record a live swing</Text>
                         <View style={[styles.actionBtnRow, { flexDirection: 'column', alignItems: 'center', gap: 20 }]}>
                           <TouchableOpacity style={[styles.actionBtn, styles.actionBtnLive, { width: 250, alignItems: 'center' }]} onPress={recordVideo} disabled={loading}>
-                            <Text style={styles.actionBtnTextLive}>🔴 RECORD LIVE SWING</Text>
+                            <Text style={styles.actionBtnTextLive}>ðŸ”´ RECORD LIVE SWING</Text>
                           </TouchableOpacity>
                           <TouchableOpacity style={[styles.actionBtn, { width: 250, alignItems: 'center' }]} onPress={pickVideo} disabled={loading}>
-                            <Text style={styles.actionBtnText}>📁 UPLOAD FROM CAMERA ROLL</Text>
+                            <Text style={styles.actionBtnText}>ðŸ“ UPLOAD FROM CAMERA ROLL</Text>
                           </TouchableOpacity>
                         </View>
                       </View>
@@ -661,13 +661,13 @@ export default function App() {
                 <View style={[styles.column, isDesktop && styles.columnDesktop]}>
                   {!videoUri && !loading && !result && (
                     <View style={styles.awaitingContainer}>
-                      <View style={styles.awaitingCircle}><Text style={styles.cameraIcon}>📹</Text></View>
+                      <View style={styles.awaitingCircle}><Text style={styles.cameraIcon}>ðŸ“¹</Text></View>
                       <Text style={styles.awaitingTitle}>AWAITING INPUT</Text>
                       <View style={{ marginTop: 20, backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: 15, borderRadius: 8, width: '90%', maxWidth: 300 }}>
                         <Text style={{ color: '#00FF66', fontWeight: 'bold', fontSize: 12, marginBottom: 8, textAlign: 'center' }}>CHAD'S PRO TIPS</Text>
-                        <Text style={{ color: '#AAAAAA', fontSize: 11, textAlign: 'center', marginBottom: 4 }}>• Keep the video under 10 seconds.</Text>
-                        <Text style={{ color: '#AAAAAA', fontSize: 11, textAlign: 'center', marginBottom: 4 }}>• Trim the fat: show only the actual swing.</Text>
-                        <Text style={{ color: '#AAAAAA', fontSize: 11, textAlign: 'center' }}>• Film directly "Face-On" or "Down-the-Line".</Text>
+                        <Text style={{ color: '#AAAAAA', fontSize: 11, textAlign: 'center', marginBottom: 4 }}>â€¢ Keep the video under 10 seconds.</Text>
+                        <Text style={{ color: '#AAAAAA', fontSize: 11, textAlign: 'center', marginBottom: 4 }}>â€¢ Trim the fat: show only the actual swing.</Text>
+                        <Text style={{ color: '#AAAAAA', fontSize: 11, textAlign: 'center' }}>â€¢ Film directly "Face-On" or "Down-the-Line".</Text>
                       </View>
                     </View>
                   )}
@@ -684,7 +684,7 @@ export default function App() {
 
                       <View style={styles.loadingTipBox}>
                         <Text style={styles.loadingTipTitle}>PRO TIP</Text>
-                        <Text style={styles.loadingTipText}>For fastest results, upload only the swing itself — 3 to 5 seconds is money.</Text>
+                        <Text style={styles.loadingTipText}>For fastest results, upload only the swing itself â€” 3 to 5 seconds is money.</Text>
                       </View>
                     </View>
                   )}
@@ -693,9 +693,9 @@ export default function App() {
                     <ScrollView style={styles.resultsContainer} showsVerticalScrollIndicator={false}>
                       <TouchableOpacity style={styles.audioBtn} onPress={playAudioCoach} disabled={audioLoading}>
                         {audioLoading ? (
-                          <Text style={[styles.audioBtnText, {color: '#888'}]}>⏳ GENERATING AI AUDIO...</Text>
+                          <Text style={[styles.audioBtnText, {color: '#888'}]}>â³ GENERATING AI AUDIO...</Text>
                         ) : (
-                          <Text style={styles.audioBtnText}>🎧 LISTEN TO AUDIO COACH</Text>
+                          <Text style={styles.audioBtnText}>ðŸŽ§ LISTEN TO AUDIO COACH</Text>
                         )}
                       </TouchableOpacity>
 
@@ -707,25 +707,25 @@ export default function App() {
                       {result.swing_summary && (
                         <>
                           <View style={styles.statsRow}>
-                            <View style={styles.statBox}><Text style={styles.statIcon}>🛡</Text><Text style={styles.statLabel}>POSTURE</Text><Text style={styles.statValue}>{String(result.swing_summary.posture_score || '-')}</Text></View>
-                            <View style={styles.statBox}><Text style={styles.statIcon}>⚡</Text><Text style={styles.statLabel}>TEMPO</Text><Text style={styles.statValue}>{String(result.swing_summary.tempo || '-')}</Text></View>
-                            <View style={styles.statBox}><Text style={styles.statIcon}>🎯</Text><Text style={styles.statLabel}>OUTCOME</Text><Text style={styles.statValue}>{String(result.swing_summary.estimated_outcome || '-')}</Text></View>
+                            <View style={styles.statBox}><Text style={styles.statIcon}>ðŸ›¡</Text><Text style={styles.statLabel}>POSTURE</Text><Text style={styles.statValue}>{String(result.swing_summary.posture_score || '-')}</Text></View>
+                            <View style={styles.statBox}><Text style={styles.statIcon}>âš¡</Text><Text style={styles.statLabel}>TEMPO</Text><Text style={styles.statValue}>{String(result.swing_summary.tempo || '-')}</Text></View>
+                            <View style={styles.statBox}><Text style={styles.statIcon}>ðŸŽ¯</Text><Text style={styles.statLabel}>OUTCOME</Text><Text style={styles.statValue}>{String(result.swing_summary.estimated_outcome || '-')}</Text></View>
                           </View>
                           <View style={styles.statsRow}>
-                            <View style={styles.statBox}><Text style={styles.statIcon}>📏</Text><Text style={styles.statLabel}>SWING PLANE</Text><Text style={styles.statValue}>{String(result.swing_summary.swing_plane || 'Over Top')}</Text></View>
-                            <View style={styles.statBox}><Text style={styles.statIcon}>🪓</Text><Text style={styles.statLabel}>CLUBFACE</Text><Text style={styles.statValue}>{String(result.swing_summary.clubface_angle || 'Open')}</Text></View>
-                            <View style={styles.statBox}><Text style={styles.statIcon}>🧍</Text><Text style={styles.statLabel}>HIP DEPTH</Text><Text style={styles.statValue}>{String(result.swing_summary.hip_depth || 'Loss')}</Text></View>
+                            <View style={styles.statBox}><Text style={styles.statIcon}>ðŸ“</Text><Text style={styles.statLabel}>SWING PLANE</Text><Text style={styles.statValue}>{String(result.swing_summary.swing_plane || 'Over Top')}</Text></View>
+                            <View style={styles.statBox}><Text style={styles.statIcon}>ðŸª“</Text><Text style={styles.statLabel}>CLUBFACE</Text><Text style={styles.statValue}>{String(result.swing_summary.clubface_angle || 'Open')}</Text></View>
+                            <View style={styles.statBox}><Text style={styles.statIcon}>ðŸ§</Text><Text style={styles.statLabel}>HIP DEPTH</Text><Text style={styles.statValue}>{String(result.swing_summary.hip_depth || 'Loss')}</Text></View>
                           </View>
                         </>
                       )}
 
                       <View style={styles.feedbackColumn}>
                         <View style={[styles.feedbackBox, styles.goodBox, { marginBottom: 15 }]}>
-                          <Text style={styles.goodHeader}>🏆 THE GOOD</Text>
+                          <Text style={styles.goodHeader}>ðŸ† THE GOOD</Text>
                           <Text style={styles.goodText}>{String(result.the_good || 'Not much to be honest.')}</Text>
                         </View>
                         <View style={[styles.feedbackBox, styles.badBox]}>
-                          <Text style={styles.badHeader}>⚠ THE CRITICAL FLAW</Text>
+                          <Text style={styles.badHeader}>âš  THE CRITICAL FLAW</Text>
                           <Text style={styles.badText}>{String(result.the_critical_flaw || 'Everything.')}</Text>
                         </View>
                       </View>
@@ -751,7 +751,7 @@ export default function App() {
                           <Text style={styles.drillName}>{safeName.toUpperCase()} <Text style={styles.drillLocation}>// {String(drill.location || 'ANYWHERE').toUpperCase()}</Text></Text>
                           <Text style={styles.drillDesc}>{String(drill.how_to_do_it || '')}</Text>
                           <View style={styles.feelBox}><Text style={styles.drillFeel}>FOCUS: {String(drill.what_to_feel || '')}</Text></View>
-                          <TouchableOpacity style={styles.linkBtn} onPress={() => openLink(ytLink)}><Text style={styles.linkBtnText}>▶ WATCH "{safeName.toUpperCase()}" ON YOUTUBE</Text></TouchableOpacity>
+                          <TouchableOpacity style={styles.linkBtn} onPress={() => openLink(ytLink)}><Text style={styles.linkBtnText}>â–¶ WATCH "{safeName.toUpperCase()}" ON YOUTUBE</Text></TouchableOpacity>
                         </View>
                       )}) : null}
 
@@ -779,7 +779,7 @@ export default function App() {
                         activeOpacity={0.8}
                       >
                         <Text style={[styles.completedBtnText, drillsCompleted && { color: '#121212' }]}>
-                          {drillsCompleted ? '✅ DRILLS COMPLETED' : '⬜ I HAVE DONE MY DRILLS'}
+                          {drillsCompleted ? 'âœ… DRILLS COMPLETED' : 'â¬œ I HAVE DONE MY DRILLS'}
                         </Text>
                       </TouchableOpacity>
                       
@@ -841,7 +841,7 @@ export default function App() {
                       <Text style={styles.scoreDate}>{item.date}</Text>
                     </View>
                     <View style={{ backgroundColor: '#1A1A1A', padding: 10, borderRadius: 10 }}>
-                      <Text style={{ color: '#00FF66', fontWeight: 'bold' }}>REVIEW ▶</Text>
+                      <Text style={{ color: '#00FF66', fontWeight: 'bold' }}>REVIEW â–¶</Text>
                     </View>
                   </TouchableOpacity>
                 ))
@@ -858,7 +858,7 @@ export default function App() {
                 <View style={[styles.formRow, { flexDirection: 'column', alignItems: 'stretch' }]}>
                   <TextInput style={[styles.input, { width: '100%', marginBottom: 15, height: 100, textAlignVertical: 'top' }]} placeholder="What's on your mind? Did you shank it into a house?" placeholderTextColor="#666" multiline />
                   <TouchableOpacity style={styles.logBtn} onPress={() => Alert.alert('Posted!', 'Your trash talk has been published.')}>
-                    <Text style={styles.logBtnText}>SEND IT 🚀</Text>
+                    <Text style={styles.logBtnText}>SEND IT ðŸš€</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -866,12 +866,12 @@ export default function App() {
               <View style={styles.drillCard}>
                 <Text style={styles.drillName}>Dave M. <Text style={styles.drillLocation}>// 2 HOURS AGO</Text></Text>
                 <Text style={styles.drillDesc}>Just got roasted by Chad for my chicken wing. Honestly, he wasn't wrong. Any good drills for keeping the left arm straight?</Text>
-                <View style={styles.feelBox}><Text style={styles.drillFeel}>3 REPLIES • 12 LIKES</Text></View>
+                <View style={styles.feelBox}><Text style={styles.drillFeel}>3 REPLIES â€¢ 12 LIKES</Text></View>
               </View>
               <View style={styles.drillCard}>
                 <Text style={styles.drillName}>Sarah T. <Text style={styles.drillLocation}>// 5 HOURS AGO</Text></Text>
                 <Text style={styles.drillDesc}>Shot an 88 today! The posture drills actually work. Suck it, Chad!</Text>
-                <View style={styles.feelBox}><Text style={styles.drillFeel}>14 REPLIES • 89 LIKES</Text></View>
+                <View style={styles.feelBox}><Text style={styles.drillFeel}>14 REPLIES â€¢ 89 LIKES</Text></View>
               </View>
             </View>
           )}
@@ -902,13 +902,13 @@ export default function App() {
             <View style={styles.caddieHeader}>
               <Text style={styles.caddieHeaderTitle}>ASK CHAD</Text>
               <TouchableOpacity onPress={() => setIsCaddieOpen(false)}>
-                <Text style={styles.caddieCloseText}>✕</Text>
+                <Text style={styles.caddieCloseText}>âœ•</Text>
               </TouchableOpacity>
             </View>
             <ScrollView style={styles.caddieScroll} contentContainerStyle={{ paddingBottom: 20 }}>
               {caddieHistory.map((msg) => (
                 <View key={msg.id} style={[styles.caddieMsgRow, msg.role === 'user' ? styles.caddieRowUser : styles.caddieRowAi]}>
-                  {msg.role === 'ai' && <Text style={styles.caddieAvatar}>⛳️</Text>}
+                  {msg.role === 'ai' && <Text style={styles.caddieAvatar}>â›³ï¸</Text>}
                   <View style={[styles.caddieBubble, msg.role === 'user' ? styles.caddieBubbleUser : styles.caddieBubbleAi]}>
                     <Text style={[styles.caddieText, msg.role === 'user' && {color: '#000'}]}>{msg.text}</Text>
                   </View>
@@ -916,7 +916,7 @@ export default function App() {
               ))}
               {caddieLoading && (
                 <View style={[styles.caddieMsgRow, styles.caddieRowAi]}>
-                  <Text style={styles.caddieAvatar}>⛳️</Text>
+                  <Text style={styles.caddieAvatar}>â›³ï¸</Text>
                   <View style={[styles.caddieBubble, styles.caddieBubbleAi]}><ActivityIndicator size="small" color="#00FF66" /></View>
                 </View>
               )}
@@ -924,7 +924,7 @@ export default function App() {
             <View style={styles.caddieInputRow}>
               <TextInput style={styles.caddieInputText} placeholder="Ask a golf question..." placeholderTextColor="#666" value={caddieInput} onChangeText={setCaddieInput} onSubmitEditing={askCaddie} />
               <TouchableOpacity style={styles.caddieSendBtn} onPress={askCaddie} disabled={caddieLoading}>
-                <Text style={styles.caddieSendBtnText}>↑</Text>
+                <Text style={styles.caddieSendBtnText}>â†‘</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -932,7 +932,7 @@ export default function App() {
 
         {!isCaddieOpen && (
           <TouchableOpacity style={styles.floatingCaddieBtn} onPress={() => setIsCaddieOpen(true)}>
-            <Text style={styles.floatingCaddieBtnText}>⛳️</Text>
+            <Text style={styles.floatingCaddieBtnText}>â›³ï¸</Text>
           </TouchableOpacity>
         )}
       </SafeAreaView>
