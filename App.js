@@ -1,13 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert, SafeAreaView, Platform, ActivityIndicator, Image, Linking, useWindowDimensions, TextInput, KeyboardAvoidingView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Video, ResizeMode, Audio } from 'expo-av';
-import { analyzeSwingVideo, askGolfAssistant, generateRoastAudio } from './geminiEngine'; 
+import { useVideoPlayer, VideoView } from 'expo-video';
+import { analyzeSwingVideo, askGolfAssistant } from './geminiEngine'; 
 import * as Speech from 'expo-speech';
 import { useIAP } from 'expo-iap';
 import FitnessPrescription from './components/FitnessPrescription';
 
 const SUBSCRIPTION_SKUS = ['breaking90_monthly'];
+
+const NativeVideoPlayer = ({ uri, style }) => {
+  const player = useVideoPlayer(uri, player => {
+    player.loop = true;
+    player.play();
+  });
+
+  return (
+    <VideoView
+      style={style}
+      player={player}
+      nativeControls
+      contentFit="contain"
+    />
+  );
+};
 
 // --- PREMIUM TRACKMAN RADAR VISUALIZER (V4) ---
 const BallFlightVisualizer = ({ plane = 'Outside-In', face = 'Open' }) => {
@@ -196,7 +212,6 @@ export default function App() {
   const [loadingStage, setLoadingStage] = useState(0);
   const [drillsCompleted, setDrillsCompleted] = useState(false);
   const [audioLoading, setAudioLoading] = useState(false);
-  const [soundObject, setSoundObject] = useState(null);
   const [pastAnalyzes, setPastAnalyzes] = useState([]);
 
   const [scores, setScores] = useState([
@@ -278,7 +293,6 @@ export default function App() {
   const currentLoadingMessage = loadingMessages[Math.min(loadingStage, loadingMessages.length - 1)];
 
   const pickVideo = async () => {
-    if (soundObject) await soundObject.stopAsync();
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Hold up!', 'We need camera roll permissions.');
@@ -296,7 +310,6 @@ export default function App() {
   };
 
   const recordVideo = async () => {
-    if (soundObject) await soundObject.stopAsync();
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Hold up!', 'We need camera permissions.');
@@ -367,10 +380,6 @@ export default function App() {
     setAudioLoading(true);
     
     try {
-      if (soundObject) {
-        await soundObject.unloadAsync();
-      }
-
       const drillName = result.personalized_training_plan?.[0]?.drill_name || 'a basic drill';
       const drillFocus = result.personalized_training_plan?.[0]?.what_to_feel || 'just hitting it straight';
       
@@ -395,18 +404,11 @@ export default function App() {
       const randomOutro = roastOutros[Math.floor(Math.random() * roastOutros.length)];
       
       const script = `${randomIntro} ${result.savage_mode} Seriously dude, your critical flaw is ${result.the_critical_flaw}. ${randomOutro} We're gonna run the ${drillName}. Focus up bro: ${drillFocus}. Let's get to work, let's go.`;
-      const audioUrl = await generateRoastAudio(script);
-      
-      if (audioUrl) {
-        const { sound } = await Audio.Sound.createAsync({ uri: audioUrl }, { shouldPlay: true });
-        setSoundObject(sound);
-      } else {
-        Speech.speak(script, {
-          language: 'en-GB',
-          pitch: 0.9,
-          rate: 1.05
-        });
-      }
+      Speech.speak(script, {
+        language: 'en-GB',
+        pitch: 0.9,
+        rate: 1.05
+      });
 
     } catch (error) {
       if (Platform.OS === 'web') {
@@ -614,13 +616,10 @@ export default function App() {
                             loop
                           />
                         ) : (
-                          <Video
+                          <NativeVideoPlayer
+                            key={showOverlayVideo && result?.overlay_available && result?.skeleton_video_url ? result.skeleton_video_url : videoUri}
                             style={styles.videoPlayer}
-                            source={{ uri: showOverlayVideo && result?.overlay_available && result?.skeleton_video_url ? result.skeleton_video_url : videoUri }}
-                            useNativeControls
-                            resizeMode={ResizeMode.CONTAIN}
-                            isLooping
-                            shouldPlay
+                            uri={showOverlayVideo && result?.overlay_available && result?.skeleton_video_url ? result.skeleton_video_url : videoUri}
                           />
                         )}
 
