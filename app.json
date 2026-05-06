@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Breaking 90",
+    "slug": "SavageGolf",
+    "scheme": "breaking90",
+    "version": "1.0.8",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.savagegolf.breaking90",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "buildNumber": "18"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.dannyboy.breaking90",
+      "versionCode": 18
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e0c9ac15-b1c5-4e6e-a2a3-572d93a9ca49"
+      }
+    },
+    "owner": "plejoai1"
+  }
+}
