@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { analyzeSwingVideo, askGolfAssistant } from './geminiEngine'; 
 import * as Speech from 'expo-speech';
+import Constants from 'expo-constants';
 import { useIAP } from 'expo-iap';
 import FitnessPrescription from './components/FitnessPrescription';
 
@@ -11,6 +12,34 @@ const SUBSCRIPTION_SKUS = ['Breaking90_monthly', 'breaking90_monthly'];
 const PRIVACY_POLICY_URL = 'https://privacy.savagegolf.app';
 const TERMS_OF_SERVICE_URL = 'https://terms.savagegolf.app';
 const ENABLE_AI_ANALYSIS_BYPASS = false;
+const IS_EXPO_GO = Constants.appOwnership === 'expo';
+const DEV_UNLOCK_FOR_EXPO_GO = __DEV__ && IS_EXPO_GO;
+const DEV_UNLOCK_FOR_WEB = __DEV__ && Platform.OS === 'web';
+
+const createIapFallback = () => ({
+  connected: false,
+  subscriptions: [],
+  fetchProducts: async () => {},
+  requestPurchase: async () => {
+    throw new Error('Apple subscriptions require the TestFlight or App Store build.');
+  },
+  finishTransaction: async () => {},
+  restorePurchases: async () => [],
+  hasActiveSubscriptions: async () => false,
+});
+
+const safeUseIAP = (options) => {
+  if (IS_EXPO_GO) {
+    return createIapFallback();
+  }
+
+  try {
+    return useIAP(options);
+  } catch (error) {
+    console.log('IAP unavailable in this runtime:', error);
+    return createIapFallback();
+  }
+};
 
 const NativeVideoPlayer = ({ uri, style }) => {
   const player = useVideoPlayer(uri, player => {
@@ -198,7 +227,7 @@ export default function App() {
   const { width } = useWindowDimensions();
   const isDesktop = width > 800; 
 
-  const [isUnlocked, setIsUnlocked] = useState(ENABLE_AI_ANALYSIS_BYPASS); 
+  const [isUnlocked, setIsUnlocked] = useState(ENABLE_AI_ANALYSIS_BYPASS || DEV_UNLOCK_FOR_EXPO_GO || DEV_UNLOCK_FOR_WEB); 
   const [currentTab, setCurrentTab] = useState('STUDIO'); 
   const [isCaddieOpen, setIsCaddieOpen] = useState(false);
   
@@ -235,7 +264,7 @@ export default function App() {
     finishTransaction,
     restorePurchases,
     hasActiveSubscriptions,
-  } = useIAP({
+  } = safeUseIAP({
     onPurchaseSuccess: async (purchase) => {
       try {
         await finishTransaction({ purchase, isConsumable: false });
@@ -341,14 +370,15 @@ export default function App() {
 
   const handleMediaResult = async (pickerResult) => {
     if (!pickerResult.canceled) {
-      const uri = pickerResult.assets[0].uri;
+      const asset = pickerResult.assets[0];
+      const uri = asset.uri;
       setVideoUri(uri); 
       setResult(null); 
       setShowOverlayVideo(false);
       setLoading(true);
       
       try {
-        const analysis = await analyzeSwingVideo(uri);
+        const analysis = await analyzeSwingVideo(asset);
         if (!analysis || typeof analysis !== 'object' || analysis.error) {
           throw new Error(analysis?.error || 'Chad lost the connection. The server might have timed out. Try again with a shorter video (under 10 seconds).');
         }
@@ -801,7 +831,8 @@ export default function App() {
                       <Text style={styles.sectionHeadline}>PRESCRIPTION (DRILLS)</Text>
                       {Array.isArray(result.personalized_training_plan) ? result.personalized_training_plan.map((drill, idx) => {
                         const safeName = drill.drill_name ? String(drill.drill_name) : 'Golf';
-                        const ytLink = drill.youtube_search_url || `https://www.youtube.com/results?search_query=${encodeURIComponent(safeName + ' drill')}`;
+                        const youtubeQuery = `${safeName} golf swing drill golf instruction`; 
+                        const ytLink = `https://www.youtube.com/results?search_query=${encodeURIComponent(youtubeQuery)}`;
                         return (
                         <View key={idx} style={styles.drillCard}>
                           <Text style={styles.drillName}>{safeName.toUpperCase()} <Text style={styles.drillLocation}>// {String(drill.location || 'ANYWHERE').toUpperCase()}</Text></Text>

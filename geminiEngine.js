@@ -20,19 +20,27 @@ function absolutize(url) {
   return `${API_BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
-export async function analyzeSwingVideo(uri) {
+export async function analyzeSwingVideo(input) {
   const formData = new FormData();
+  const asset = typeof input === 'string' ? { uri: input } : (input || {});
+  const uri = asset.uri;
 
   // React Native wants the { uri, name, type } object, but Expo web needs a real
-  // Blob/File. Sending the RN object from web is what produces backend errors
-  // that show up as "[object Object]" in the app.
+  // Blob/File. Prefer the browser File from expo-image-picker web; fall back to
+  // fetching blob/data URIs; only use the RN object shape on native/devices.
   let attached = false;
-  if (typeof fetch === 'function' && typeof Blob !== 'undefined' && /^(blob:|data:|https?:)/i.test(uri)) {
+  if (asset.file && typeof File !== 'undefined' && asset.file instanceof File) {
+    formData.append('video', asset.file, asset.file.name || 'swing.mp4');
+    attached = true;
+  }
+
+  if (!attached && typeof fetch === 'function' && typeof Blob !== 'undefined' && /^(blob:|data:|https?:)/i.test(uri || '')) {
     try {
       const fileResponse = await fetch(uri);
       const blob = await fileResponse.blob();
       if (blob && blob.size > 0) {
-        formData.append('video', blob, 'swing.mp4');
+        const filename = asset.fileName || asset.name || (blob.type === 'video/quicktime' ? 'swing.mov' : 'swing.mp4');
+        formData.append('video', blob, filename);
         attached = true;
       }
     } catch (error) {
@@ -41,10 +49,13 @@ export async function analyzeSwingVideo(uri) {
   }
 
   if (!attached) {
+    if (!uri) {
+      throw new Error('No video file was selected.');
+    }
     formData.append('video', {
       uri,
-      name: 'swing.mp4',
-      type: 'video/mp4'
+      name: asset.fileName || asset.name || 'swing.mp4',
+      type: asset.mimeType || asset.type || 'video/mp4'
     });
   }
 
