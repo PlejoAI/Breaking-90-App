@@ -490,10 +490,16 @@ export default function App() {
       const randomOutro = roastOutros[Math.floor(Math.random() * roastOutros.length)];
       
       const script = `${randomIntro} ${result.savage_mode} Seriously dude, your critical flaw is ${result.the_critical_flaw}. ${randomOutro} We're gonna run the ${drillName}. Focus up bro: ${drillFocus}. Let's get to work, let's go.`;
+      const voices = await Speech.getAvailableVoicesAsync().catch(() => []);
+      const chadVoice = voices.find(v =>
+        String(v.language || '').toLowerCase().startsWith('en') &&
+        /daniel|alex|aaron|fred|reed|evan|male|enhanced|premium/i.test(`${v.name || ''} ${v.identifier || ''}`)
+      );
       Speech.speak(script, {
-        language: 'en-GB',
-        pitch: 0.9,
-        rate: 1.05
+        voice: chadVoice?.identifier,
+        language: chadVoice?.language || 'en-US',
+        pitch: 0.72,
+        rate: Platform.OS === 'ios' ? 0.48 : 0.86
       });
 
     } catch (error) {
