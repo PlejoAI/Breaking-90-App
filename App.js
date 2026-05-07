@@ -369,7 +369,7 @@ export default function App() {
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
       allowsEditing: true,
-      videoMaxDuration: 15,
+      videoMaxDuration: 10,
       quality: 0.5,
     });
     
@@ -386,7 +386,7 @@ export default function App() {
     let pickerResult = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Videos,
       allowsEditing: true,
-      videoMaxDuration: 15,
+      videoMaxDuration: 10,
       quality: 0.5,
     });
     
@@ -396,6 +396,14 @@ export default function App() {
   const handleMediaResult = async (pickerResult) => {
     if (!pickerResult.canceled) {
       const asset = pickerResult.assets[0];
+      const rawDuration = asset.duration || 0;
+      const durationSeconds = rawDuration > 1000 ? rawDuration / 1000 : rawDuration;
+      if (durationSeconds > 10) {
+        const message = 'Please upload a golf swing clip under 10 seconds. Trim it to just the swing, then try again.';
+        if (Platform.OS === 'web') window.alert(message);
+        else Alert.alert('Video Too Long', message);
+        return;
+      }
       const uri = asset.uri;
       setVideoUri(uri); 
       setResult(null); 
