@@ -10,7 +10,7 @@ import FitnessPrescription from './components/FitnessPrescription';
 const SUBSCRIPTION_SKUS = ['Breaking90_monthly', 'breaking90_monthly'];
 const PRIVACY_POLICY_URL = 'https://privacy.savagegolf.app';
 const TERMS_OF_SERVICE_URL = 'https://terms.savagegolf.app';
-const ENABLE_AI_ANALYSIS_BYPASS = true;
+const ENABLE_AI_ANALYSIS_BYPASS = false;
 
 const NativeVideoPlayer = ({ uri, style }) => {
   const player = useVideoPlayer(uri, player => {
