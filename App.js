@@ -704,6 +704,9 @@ export default function App() {
           <TouchableOpacity style={[styles.tabBtn, currentTab === 'SHOP' && styles.activeTabBtn]} onPress={() => setCurrentTab('SHOP')}>
             <Text style={[styles.tabText, currentTab === 'SHOP' && styles.activeTabText]}>PRO SHOP</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={[styles.tabBtn, currentTab === 'SUPPORT' && styles.activeTabBtn]} onPress={() => setCurrentTab('SUPPORT')}>
+            <Text style={[styles.tabText, currentTab === 'SUPPORT' && styles.activeTabText]}>SUPPORT</Text>
+          </TouchableOpacity>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -992,6 +995,23 @@ export default function App() {
               </View>
             </View>
           )}
+
+          {currentTab === 'SUPPORT' && (
+            <View style={styles.profileContainer}>
+              <Text style={styles.headlineText}>NEED <Text style={styles.neonText}>HELP?</Text></Text>
+              <Text style={styles.subText}>Chad can roast your swing, but support can fix the app.</Text>
+              <View style={styles.supportCard}>
+                <Text style={styles.supportTitle}>BREAKING 90 SUPPORT</Text>
+                <Text style={styles.supportText}>Questions, billing help, bugs, or app review issues — reach us here.</Text>
+                <TouchableOpacity style={styles.linkBtn} onPress={() => openLink('mailto:Chad@savagegolf.app')}>
+                  <Text style={styles.linkBtnText}>EMAIL CHAD@SAVAGEGOLF.APP</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.linkBtn, { marginTop: 12 }]} onPress={() => openLink('https://support.savagegolf.app')}>
+                  <Text style={styles.linkBtnText}>OPEN SUPPORT.SAVAGEGOLF.APP</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
         </ScrollView>
 
         {isCaddieOpen && (
@@ -1165,6 +1185,9 @@ const styles = StyleSheet.create({
   scoreNumber: { fontSize: 22, fontWeight: '900' },
   scoreNumberGood: { color: '#00FF66' },
   scoreNumberBad: { color: '#FF453A' },
+  supportCard: { backgroundColor: '#0A0A0A', padding: 30, borderRadius: 20, borderWidth: 1, borderColor: '#222222', marginTop: 10 },
+  supportTitle: { color: '#FFFFFF', fontSize: 22, fontWeight: '900', letterSpacing: 1, marginBottom: 12 },
+  supportText: { color: '#AAAAAA', fontSize: 16, lineHeight: 24, marginBottom: 20 },
   merchImage: { width: 300, height: 400, borderRadius: 15, borderWidth: 1, borderColor: '#333' },
   floatingCaddieBtn: { position: 'absolute', bottom: 30, right: 30, width: 65, height: 65, borderRadius: 35, backgroundColor: '#00FF66', justifyContent: 'center', alignItems: 'center', shadowColor: '#00FF66', shadowOpacity: 0.4, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, zIndex: 1000 },
   floatingCaddieBtnText: { fontSize: 30 },
