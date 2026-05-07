@@ -57,6 +57,31 @@ const NativeVideoPlayer = ({ uri, style }) => {
   );
 };
 
+const GolfTerminology = () => {
+  const terms = [
+    ['Swing Plane', 'The path your club travels around your body. Too steep often causes slices or pulls.'],
+    ['Clubface', 'Where the face points at impact. Open sends it right; closed sends it left.'],
+    ['Tempo', 'Your swing rhythm. Smooth tempo usually beats swinging harder.'],
+    ['Hip Depth', 'Keeping your hips back through impact. Losing it is early extension.'],
+    ['Tush Line', 'The line behind your hips at setup. Moving off it means you stood up.'],
+    ['Face-to-Path', 'Difference between clubface and swing path. This creates curve.'],
+    ['Over the Top', 'Club comes down too steep/outside. Common slice move.'],
+    ['Casting', 'Releasing wrist angle too early, costing speed and contact.'],
+  ];
+
+  return (
+    <View style={styles.glossaryCard}>
+      <Text style={styles.glossaryTitle}>GOLF TERMS — PLAIN ENGLISH</Text>
+      {terms.map(([term, meaning]) => (
+        <View key={term} style={styles.glossaryRow}>
+          <Text style={styles.glossaryTerm}>{term}</Text>
+          <Text style={styles.glossaryMeaning}>{meaning}</Text>
+        </View>
+      ))}
+    </View>
+  );
+};
+
 // --- PREMIUM TRACKMAN RADAR VISUALIZER (V4) ---
 const BallFlightVisualizer = ({ plane = 'Outside-In', face = 'Open' }) => {
   const [ballPos, setBallPos] = useState({x: 150, y: 220});
@@ -802,6 +827,7 @@ export default function App() {
                             <View style={styles.statBox}><Text style={styles.statIcon}>🪓</Text><Text style={styles.statLabel}>CLUBFACE</Text><Text style={styles.statValue}>{String(result.swing_summary.clubface_angle || 'Open')}</Text></View>
                             <View style={styles.statBox}><Text style={styles.statIcon}>🧍</Text><Text style={styles.statLabel}>HIP DEPTH</Text><Text style={styles.statValue}>{String(result.swing_summary.hip_depth || 'Loss')}</Text></View>
                           </View>
+                          <GolfTerminology />
                         </>
                       )}
 
@@ -1084,6 +1110,11 @@ const styles = StyleSheet.create({
   statIcon: { fontSize: 16, color: '#00D189', marginBottom: 10 },
   statLabel: { color: '#666666', fontSize: 12, fontWeight: 'bold', letterSpacing: 1, marginBottom: 5 },
   statValue: { color: '#FFFFFF', fontSize: 22, fontWeight: 'bold' },
+  glossaryCard: { backgroundColor: '#0A0A0A', padding: 20, borderRadius: 16, borderWidth: 1, borderColor: '#222222', marginBottom: 25 },
+  glossaryTitle: { color: '#00FF66', fontSize: 13, fontWeight: '900', letterSpacing: 1.2, marginBottom: 12 },
+  glossaryRow: { marginBottom: 10 },
+  glossaryTerm: { color: '#FFFFFF', fontSize: 14, fontWeight: '900', marginBottom: 3 },
+  glossaryMeaning: { color: '#AAAAAA', fontSize: 13, lineHeight: 19 },
   feedbackColumn: { flexDirection: 'column', justifyContent: 'flex-start', marginBottom: 40, width: '100%' },
   feedbackBox: { flex: 1, backgroundColor: '#0A0A0A', padding: 25, borderRadius: 20, borderWidth: 1, borderColor: '#222222' },
   goodHeader: { color: '#00D189', fontSize: 12, fontWeight: '900', letterSpacing: 1.5, marginBottom: 15 },

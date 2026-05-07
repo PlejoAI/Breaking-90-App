@@ -3,7 +3,7 @@
     "name": "Breaking 90",
     "slug": "SavageGolf",
     "scheme": "breaking90",
-    "version": "1.0.13",
+    "version": "1.0.14",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -21,7 +21,7 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       },
-      "buildNumber": "23"
+      "buildNumber": "24"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +29,7 @@
         "backgroundColor": "#000000"
       },
       "package": "com.dannyboy.breaking90",
-      "versionCode": 23
+      "versionCode": 24
     },
     "web": {
       "favicon": "./assets/icon.png"
