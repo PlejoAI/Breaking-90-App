@@ -1,6 +1,19 @@
 const DEFAULT_API_BASE_URL = 'https://savage-golf-api.onrender.com';
 const API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL || DEFAULT_API_BASE_URL).replace(/\/$/, '');
 
+function errorMessage(value, fallback = 'Something went wrong.') {
+  if (!value) return fallback;
+  if (typeof value === 'string') return value;
+  if (value.message && typeof value.message === 'string') return value.message;
+  if (value.detail) return errorMessage(value.detail, fallback);
+  if (value.error) return errorMessage(value.error, fallback);
+  try {
+    return JSON.stringify(value);
+  } catch (_) {
+    return String(value);
+  }
+}
+
 function absolutize(url) {
   if (!url) return url;
   if (/^https?:\/\//i.test(url)) return url;
@@ -9,11 +22,31 @@ function absolutize(url) {
 
 export async function analyzeSwingVideo(uri) {
   const formData = new FormData();
-  formData.append('video', {
-    uri,
-    name: 'swing.mp4',
-    type: 'video/mp4'
-  });
+
+  // React Native wants the { uri, name, type } object, but Expo web needs a real
+  // Blob/File. Sending the RN object from web is what produces backend errors
+  // that show up as "[object Object]" in the app.
+  let attached = false;
+  if (typeof fetch === 'function' && typeof Blob !== 'undefined' && /^(blob:|data:|https?:)/i.test(uri)) {
+    try {
+      const fileResponse = await fetch(uri);
+      const blob = await fileResponse.blob();
+      if (blob && blob.size > 0) {
+        formData.append('video', blob, 'swing.mp4');
+        attached = true;
+      }
+    } catch (error) {
+      console.log('Web video blob conversion failed, falling back to native upload shape:', error);
+    }
+  }
+
+  if (!attached) {
+    formData.append('video', {
+      uri,
+      name: 'swing.mp4',
+      type: 'video/mp4'
+    });
+  }
 
   const response = await fetch(`${API_BASE_URL}/api/analyze-swing`, {
     method: 'POST',
@@ -32,7 +65,7 @@ export async function analyzeSwingVideo(uri) {
   }
 
   if (!response.ok) {
-    throw new Error(data?.detail || data?.error || `Backend error ${response.status}`);
+    throw new Error(errorMessage(data, `Backend error ${response.status}`));
   }
 
   if (data.skeleton_video_url) {
@@ -59,7 +92,19 @@ export async function generateRoastAudio(text) {
 }
 
 export async function askGolfAssistant(question) {
-  // The recovered backend does not currently include a caddie/assistant endpoint.
-  // Keep the UI usable until we add one.
-  return `Chad's caddie radio is not wired to the backend yet, but here's the honest answer: ${question}`;
+  const response = await fetch(`${API_BASE_URL}/api/ask-caddie`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ question })
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(errorMessage(data, `Caddie backend error ${response.status}`));
+  }
+
+  return data.answer || data.response || 'Chad came back with nothing. Ask that one again.';
 }

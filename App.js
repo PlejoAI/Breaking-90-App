@@ -7,9 +7,10 @@ import * as Speech from 'expo-speech';
 import { useIAP } from 'expo-iap';
 import FitnessPrescription from './components/FitnessPrescription';
 
-const SUBSCRIPTION_SKUS = ['Breaking90_monthly'];
+const SUBSCRIPTION_SKUS = ['Breaking90_monthly', 'breaking90_monthly'];
 const PRIVACY_POLICY_URL = 'https://privacy.savagegolf.app';
 const TERMS_OF_SERVICE_URL = 'https://terms.savagegolf.app';
+const ENABLE_AI_ANALYSIS_BYPASS = true;
 
 const NativeVideoPlayer = ({ uri, style }) => {
   const player = useVideoPlayer(uri, player => {
@@ -197,7 +198,7 @@ export default function App() {
   const { width } = useWindowDimensions();
   const isDesktop = width > 800; 
 
-  const [isUnlocked, setIsUnlocked] = useState(false); 
+  const [isUnlocked, setIsUnlocked] = useState(ENABLE_AI_ANALYSIS_BYPASS); 
   const [currentTab, setCurrentTab] = useState('STUDIO'); 
   const [isCaddieOpen, setIsCaddieOpen] = useState(false);
   
@@ -223,6 +224,7 @@ export default function App() {
   const [courseInput, setCourseInput] = useState('');
   const [scoreInput, setScoreInput] = useState('');
   const [purchaseLoading, setPurchaseLoading] = useState(false);
+  const [productsLoading, setProductsLoading] = useState(true);
   const [legalAccepted, setLegalAccepted] = useState(false);
 
   const {
@@ -258,10 +260,18 @@ export default function App() {
   const membershipPrice = monthlySubscription?.displayPrice || '$14.99/mo';
 
   useEffect(() => {
-    if (!iapConnected || Platform.OS === 'web') return;
+    if (Platform.OS === 'web') {
+      setProductsLoading(false);
+      return;
+    }
 
+    if (!iapConnected) return;
+
+    setProductsLoading(true);
     fetchProducts({ skus: SUBSCRIPTION_SKUS, type: 'subs' }).catch((error) => {
       console.log('IAP product fetch error:', error);
+    }).finally(() => {
+      setProductsLoading(false);
     });
   }, [iapConnected, fetchProducts]);
 
@@ -356,7 +366,17 @@ export default function App() {
       } catch (error) {
         console.log('Upload Error:', error);
         
-        let errorMsg = error.message;
+        let errorMsg = error?.message || error?.detail || error?.error || error;
+        if (typeof errorMsg !== 'string') {
+          try {
+            errorMsg = JSON.stringify(errorMsg);
+          } catch (_) {
+            errorMsg = String(errorMsg);
+          }
+        }
+        if (!errorMsg || errorMsg === '{}') {
+          errorMsg = 'The upload failed, but the server did not return a readable error.';
+        }
         if (errorMsg.includes('Network') || errorMsg.includes('fetch')) {
           errorMsg = "Chad lost connection to the server. Don't close or minimize the app while the video is uploading!";
         } else if (errorMsg.includes('JSON')) {
@@ -450,11 +470,19 @@ export default function App() {
       return;
     }
 
+    if (!monthlySubscription) {
+      Alert.alert(
+        'Subscription Not Ready',
+        'Apple has not returned the Breaking 90 subscription product yet. Confirm the subscription Product ID is Breaking90_monthly, the metadata/pricing/free trial are complete, and the subscription is submitted with this app version in App Store Connect.'
+      );
+      return;
+    }
+
     setPurchaseLoading(true);
     try {
       await requestPurchase({
         request: {
-          apple: { sku: SUBSCRIPTION_SKUS[0] },
+          apple: { sku: monthlySubscription.id },
           google: { skus: SUBSCRIPTION_SKUS },
         },
         type: 'subs',
@@ -536,10 +564,6 @@ export default function App() {
                 <Text style={styles.bioText}>The scorecard never lies. Stop guessing your handicap. Log your rounds seamlessly and track your improvement to see if Chad's brutal roasts are actually translating to lower scores out on the course.</Text>
               </View>
               <View style={styles.featureCard}>
-                <Text style={styles.bioHighlight}>THE PLAYERS CLUB</Text>
-                <Text style={styles.bioText}>Join the ultimate members-only forum. Talk trash, share your absolute worst swings, and find drills that actually work. Roast your buddies and get roasted by the rest of the Breaking 90 community.</Text>
-              </View>
-              <View style={styles.featureCard}>
                 <Text style={styles.bioHighlight}>EXCLUSIVE PRO SHOP</Text>
                 <Text style={styles.bioText}>Look good, play slightly less terrible. Members get exclusive, early access to our limited-drop performance polos, hats, and hoodies. Premium gear for golfers who don't take themselves too seriously.</Text>
               </View>
@@ -571,9 +595,14 @@ export default function App() {
               <Text style={styles.legalLink} onPress={() => openLegalLink(TERMS_OF_SERVICE_URL, 'Terms of Service')}>Terms of Service</Text>.
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.paywallBtn, (!legalAccepted || purchaseLoading) && styles.paywallBtnDisabled]} onPress={startMembershipTrial} disabled={purchaseLoading}>
-            <Text style={styles.paywallBtnText}>{purchaseLoading ? 'CONNECTING TO APPLE...' : 'START FREE TRIAL'}</Text>
+          <TouchableOpacity style={[styles.paywallBtn, (!legalAccepted || purchaseLoading || productsLoading || !monthlySubscription) && styles.paywallBtnDisabled]} onPress={startMembershipTrial} disabled={purchaseLoading}>
+            <Text style={styles.paywallBtnText}>{purchaseLoading || productsLoading ? 'CONNECTING TO APPLE...' : !monthlySubscription ? 'APPLE SUBSCRIPTION NOT READY' : 'START FREE TRIAL'}</Text>
           </TouchableOpacity>
+          {ENABLE_AI_ANALYSIS_BYPASS && (
+            <TouchableOpacity style={styles.loginBtn} onPress={() => setIsUnlocked(true)}>
+              <Text style={styles.loginBtnText}>Bypass to AI Swing Analysis</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity style={styles.loginBtn} onPress={restoreMembership}>
             <Text style={styles.loginBtnText}>Already a member? Restore Purchase</Text>
           </TouchableOpacity>
@@ -605,9 +634,6 @@ export default function App() {
           </TouchableOpacity>
           <TouchableOpacity style={[styles.tabBtn, currentTab === 'PROFILE' && styles.activeTabBtn]} onPress={() => setCurrentTab('PROFILE')}>
             <Text style={[styles.tabText, currentTab === 'PROFILE' && styles.activeTabText]}>MY SCORES & LIBRARY</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.tabBtn, currentTab === 'COMMUNITY' && styles.activeTabBtn]} onPress={() => setCurrentTab('COMMUNITY')}>
-            <Text style={[styles.tabText, currentTab === 'COMMUNITY' && styles.activeTabText]}>THE PLAYERS CLUB</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.tabBtn, currentTab === 'SHOP' && styles.activeTabBtn]} onPress={() => setCurrentTab('SHOP')}>
             <Text style={[styles.tabText, currentTab === 'SHOP' && styles.activeTabText]}>PRO SHOP</Text>
@@ -876,33 +902,6 @@ export default function App() {
                   </TouchableOpacity>
                 ))
               )}
-            </View>
-          )}
-
-          {currentTab === 'COMMUNITY' && (
-            <View style={styles.profileContainer}>
-              <Text style={styles.headlineText}>THE <Text style={styles.neonText}>CLUBHOUSE.</Text></Text>
-              <Text style={styles.subText}>Roast each other. Share drills. Talk trash.</Text>
-              <View style={styles.logRoundBox}>
-                <Text style={styles.sectionHeadline}>POST TO FORUM</Text>
-                <View style={[styles.formRow, { flexDirection: 'column', alignItems: 'stretch' }]}>
-                  <TextInput style={[styles.input, { width: '100%', marginBottom: 15, height: 100, textAlignVertical: 'top' }]} placeholder="What's on your mind? Did you shank it into a house?" placeholderTextColor="#666" multiline />
-                  <TouchableOpacity style={styles.logBtn} onPress={() => Alert.alert('Posted!', 'Your trash talk has been published.')}>
-                    <Text style={styles.logBtnText}>SEND IT 🚀</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <Text style={styles.sectionHeadline}>RECENT POSTS</Text>
-              <View style={styles.drillCard}>
-                <Text style={styles.drillName}>Dave M. <Text style={styles.drillLocation}>// 2 HOURS AGO</Text></Text>
-                <Text style={styles.drillDesc}>Just got roasted by Chad for my chicken wing. Honestly, he wasn't wrong. Any good drills for keeping the left arm straight?</Text>
-                <View style={styles.feelBox}><Text style={styles.drillFeel}>3 REPLIES • 12 LIKES</Text></View>
-              </View>
-              <View style={styles.drillCard}>
-                <Text style={styles.drillName}>Sarah T. <Text style={styles.drillLocation}>// 5 HOURS AGO</Text></Text>
-                <Text style={styles.drillDesc}>Shot an 88 today! The posture drills actually work. Suck it, Chad!</Text>
-                <View style={styles.feelBox}><Text style={styles.drillFeel}>14 REPLIES • 89 LIKES</Text></View>
-              </View>
             </View>
           )}
 
