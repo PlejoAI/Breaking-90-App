@@ -29,8 +29,9 @@ export async function analyzeSwingVideo(input) {
   // Blob/File. Prefer the browser File from expo-image-picker web; fall back to
   // fetching blob/data URIs; only use the RN object shape on native/devices.
   let attached = false;
-  if (asset.file && typeof File !== 'undefined' && asset.file instanceof File) {
-    formData.append('video', asset.file, asset.file.name || 'swing.mp4');
+  if (asset.file && typeof Blob !== 'undefined' && asset.file instanceof Blob && asset.file.size > 0) {
+    const filename = asset.file.name || asset.fileName || asset.name || (asset.file.type === 'video/quicktime' ? 'swing.mov' : 'swing.mp4');
+    formData.append('video', asset.file, filename);
     attached = true;
   }
 
@@ -59,11 +60,12 @@ export async function analyzeSwingVideo(input) {
     });
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/analyze-swing`, {
+  const response = await fetch(`${API_BASE_URL}/api/analyze-swing?ts=${Date.now()}`, {
     method: 'POST',
     body: formData,
     headers: {
-      Accept: 'application/json'
+      Accept: 'application/json',
+      'Cache-Control': 'no-cache'
     }
   });
 
