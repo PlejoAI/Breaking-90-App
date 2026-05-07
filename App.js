@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Alert, SafeAreaView, Platform, ActivityIndicator, Image, Linking, useWindowDimensions, TextInput, KeyboardAvoidingView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import { analyzeSwingVideo, askGolfAssistant } from './geminiEngine'; 
+import { analyzeSwingVideo, askGolfAssistant, generateRoastAudio } from './geminiEngine'; 
 import * as Speech from 'expo-speech';
+import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import Constants from 'expo-constants';
 import { useIAP } from 'expo-iap';
 import FitnessPrescription from './components/FitnessPrescription';
@@ -15,6 +16,7 @@ const ENABLE_AI_ANALYSIS_BYPASS = false;
 const IS_EXPO_GO = Constants.appOwnership === 'expo';
 const DEV_UNLOCK_FOR_EXPO_GO = __DEV__ && IS_EXPO_GO;
 const DEV_UNLOCK_FOR_WEB = __DEV__ && Platform.OS === 'web';
+let audioCoachPlayer = null;
 
 const createIapFallback = () => ({
   connected: false,
@@ -464,6 +466,7 @@ export default function App() {
   const playAudioCoach = async () => {
     if (!result || audioLoading) return;
     setAudioLoading(true);
+    let script = '';
     
     try {
       const drillName = result.personalized_training_plan?.[0]?.drill_name || 'a basic drill';
@@ -489,24 +492,18 @@ export default function App() {
       const randomIntro = roastIntros[Math.floor(Math.random() * roastIntros.length)];
       const randomOutro = roastOutros[Math.floor(Math.random() * roastOutros.length)];
       
-      const script = `${randomIntro} ${result.savage_mode} Seriously dude, your critical flaw is ${result.the_critical_flaw}. ${randomOutro} We're gonna run the ${drillName}. Focus up bro: ${drillFocus}. Let's get to work, let's go.`;
-      const voices = await Speech.getAvailableVoicesAsync().catch(() => []);
-      const chadVoice = voices.find(v =>
-        String(v.language || '').toLowerCase().startsWith('en') &&
-        /daniel|alex|aaron|fred|reed|evan|male|enhanced|premium/i.test(`${v.name || ''} ${v.identifier || ''}`)
-      );
-      Speech.speak(script, {
-        voice: chadVoice?.identifier,
-        language: chadVoice?.language || 'en-US',
-        pitch: 0.72,
-        rate: Platform.OS === 'ios' ? 0.48 : 0.86
-      });
+      script = `${randomIntro} ${result.savage_mode} Seriously dude, your critical flaw is ${result.the_critical_flaw}. ${randomOutro} We're gonna run the ${drillName}. Focus up bro: ${drillFocus}. Let's get to work, let's go.`;
+      const audioUrl = await generateRoastAudio(script);
+      if (!audioUrl) throw new Error('OpenAI voice unavailable');
+      await setAudioModeAsync({ playsInSilentMode: true, interruptionMode: 'doNotMix' });
+      audioCoachPlayer?.remove?.();
+      audioCoachPlayer = createAudioPlayer(audioUrl, { downloadFirst: true });
+      audioCoachPlayer.play();
 
     } catch (error) {
-      if (Platform.OS === 'web') {
-        window.alert('Audio Error: ' + error.message);
-      } else {
-        Alert.alert('Audio Error', error.message);
+      console.log('OpenAI audio failed, using device voice:', error);
+      if (script) {
+        Speech.speak(script, { language: 'en-US', pitch: 0.72, rate: Platform.OS === 'ios' ? 0.48 : 0.86 });
       }
     } finally {
       setAudioLoading(false);
