@@ -69,8 +69,9 @@ export async function analyzeSwingVideo(uri) {
   }
 
   if (data.skeleton_video_url) {
+    const backendOverlayFlag = data.overlay_available;
     data.skeleton_video_url = absolutize(data.skeleton_video_url);
-    data.overlay_available = true;
+    data.overlay_available = typeof backendOverlayFlag === 'boolean' ? backendOverlayFlag : true;
   }
 
   return data;
